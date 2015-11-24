@@ -20,10 +20,8 @@ database of players and their information, games played, bans
 Field | Type | Comment
 --- | --- | --- 
 steamid | INTEGER |
-communityvisibilitystate | INTEGER  | 1 means private 3 means public
-lastlogoff| INTEGER |
-realname | TEXT |
-firstname | TEXT |
+privacy | INTEGER | 1 means private 3 means public
+realName | TEXT |
 gender | REAL| likelyhood of being male
 timeCreated | INTEGER |epoch time
 numFriends | INTEGER |

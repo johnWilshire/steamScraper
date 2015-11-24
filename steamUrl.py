@@ -6,7 +6,7 @@
 class SteamUrl:
     # constructor takes key as argument, if no key passed key is ""
     def __init__(self, key=""):
-            self.key = key
+        self.key = key
 
 
     # gets a url to request the a players information from the steam api.

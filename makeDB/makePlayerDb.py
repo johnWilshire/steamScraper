@@ -6,9 +6,8 @@ con = lite.connect('players.db')
 c = con.cursor()
 c.execute("""CREATE TABLE Players (
     steamid INTEGER,
-    lastlogoff INTEGER,
+    privacy INTEGER,
     realname TEXT,
-    firstname  TEXT,
     gender REAL,
     timecreated INTEGER,
     numFriends INTEGER,

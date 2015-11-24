@@ -6,23 +6,31 @@ import sys
 import re
 
 from steamUrl import SteamUrl
+from player import Player
 
 def main():
     keyFile = open("keyfile.txt")
     key = keyFile.readlines()[0].rstrip()
+    keyFile.close()
     urlGen = SteamUrl(key)
 
     toScrapeCon = lite.connect("toScrape.db")
+    playersCon = lite.connect("players.db")
+    
     #friends =  getFriendIds(urlGen, "76561198052601146")
     
-    print isWaitingToBeScraped(toScrapeCon,76561197960435530)
-    
-    print getNextToBeScraped(toScrapeCon)
+    #pushFriendsToScrape(playersCon,toScrapeCon,friends + [76561197960435530])
 
+    #print isWaitingToBeScraped(toScrapeCon,76561197960435530)
+    
+    player = Player(getPlayerInfo(urlGen, 76561198052601146))
+
+    print addPlayerInfoToDB(playersCon, player)
 
 
 # gets player info 
 def getPlayerInfo(urlGen,pid):
+    pid = str(pid)
     url =  urlGen.playerSummary(pid)
     response = urllib2.urlopen(url)
     jsons = json.loads(response.read())
@@ -33,15 +41,36 @@ def getPlayerInfo(urlGen,pid):
     else: 
         return "none" 
 
+# adds player summary info to players.db
+def addPlayerInfoToDB(playersCon, player):
+    #c = playersCon.cursor()
+    #c.execute()
+    #playersCon.commit()
+    print player.getSqlSummaryInsert()
+
+
+# add friends that havent been scraped and are not in toBeScraped
+# to the db toScrape
+def pushFriendsToScrape(playersCon, toScrapeCon, friends):
+    for friend in friends:
+        if hasbeenScraped(playersCon, friend) or isWaitingToBeScraped(toScrapeCon, friend):
+            print "not adding ", friend
+        else:
+            c = toScrapeCon.cursor()
+            q = (friend,)
+            c.execute("INSERT INTO toScrape (steamid) VALUES (?)", q);
+            print "added ", friend, " to toScrape"
+            toScrapeCon.commit()
+
 
 # returns a list of friends that the users has
 def getFriendIds(urlGen,pid):
+    pid = str(pid)
     url =  urlGen.friendsList(pid)
     response = urllib2.urlopen(url)
     jsons = json.loads(response.read())
     if "friendslist" in jsons:
         friendsRaw = jsons["friendslist"]["friends"]
-    
         friends  = list()
         for friend in friendsRaw:
             friends.append(int(friend["steamid"]))
@@ -51,6 +80,7 @@ def getFriendIds(urlGen,pid):
 
 ## returns a list of game ids that have non zero playtime for the give player
 def getPlayersGames(urlGen,pid):
+    pid = str(pid)
     url =  urlGen.getOwnedGames(pid)
     response = urllib2.urlopen(url)
     jsons = json.loads(response.read())
