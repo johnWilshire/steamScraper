@@ -22,9 +22,8 @@ Field | Type | Comment
 steamid | INTEGER |
 realName | TEXT |
 gender | REAL| likelyhood of being male
-timeCreated | INTEGER |epoch time
 numFriends | INTEGER |
-friendList | TEXT | json of friend steamids of thisplayer 
+friendList | TEXT | name of the friendsTable
 numberOfGames |INTEGER |
 numberOfPlayedGames | INTEGER |
 games | TEXT | name of game table
