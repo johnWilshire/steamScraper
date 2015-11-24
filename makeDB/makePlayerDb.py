@@ -11,18 +11,17 @@ c.execute("""CREATE TABLE Players (
     gender REAL,
     timecreated INTEGER,
     numFriends INTEGER,
-    friendList BLOB,
+    friendList TEXT,
     numberOfGames INTEGER,
     numberOfPlayedGames INTEGER,
-    games BLOB, 
+    games TEXT, 
     loccountrycode TEXT,
     locstatecode TEXT,
     loccityid INTEGER,
     CommunityBanned TEXT,
     VACBanned TEXT,
     NumberOfVACBans INTEGER,
-    NumberOfGameBans INTEGER
-    );""")
+    NumberOfGameBans INTEGER );""")
 
 con.commit()
 con.close()

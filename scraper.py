@@ -7,6 +7,8 @@ import re
 
 from steamUrl import SteamUrl
 from player import Player
+from queue import Queue
+
 
 def main():
     keyFile = open("keyfile.txt")
@@ -14,18 +16,27 @@ def main():
     keyFile.close()
     urlGen = SteamUrl(key)
 
-    toScrapeCon = lite.connect("toScrape.db")
+    queue = Queue(lite.connect("toScrape.db"))
+    # todo players
     playersCon = lite.connect("players.db")
     
-    #friends =  getFriendIds(urlGen, "76561198052601146")
+    numScrape = 10 
+    if len(sys.argv) == 2:
+        numScrape = int(sys.argv[1])
+    #friends =  (urlGen, "76561198052601146")
     
     #pushFriendsToScrape(playersCon,toScrapeCon,friends + [76561197960435530])
 
     #print isWaitingToBeScraped(toScrapeCon,76561197960435530)
-    
-    player = Player(getPlayerInfo(urlGen, 76561198052601146))
-
-    print addPlayerInfoToDB(playersCon, player)
+    while (numScrape > 0):
+        pid = getNextToBeScraped(toScrapeCon)
+        player = Player(getPlayerInfo(urlGen, pid))
+        print "player", player.steamid
+        if not player.isPrivate():
+            player.addPlayerInfoToDB(playersCon)
+            pushFriendsToScrape(playersCon, toScrapeCon, getFriendIds(urlGen, pid) )
+        removeFromToBeScraped(toScrapeCon, pid)
+        numScrape -= 1
 
 
 # gets player info 
@@ -41,26 +52,16 @@ def getPlayerInfo(urlGen,pid):
     else: 
         return "none" 
 
-# adds player summary info to players.db
-def addPlayerInfoToDB(playersCon, player):
-    #c = playersCon.cursor()
-    #c.execute()
-    #playersCon.commit()
-    print player.getSqlSummaryInsert()
-
 
 # add friends that havent been scraped and are not in toBeScraped
 # to the db toScrape
 def pushFriendsToScrape(playersCon, toScrapeCon, friends):
     for friend in friends:
-        if hasbeenScraped(playersCon, friend) or isWaitingToBeScraped(toScrapeCon, friend):
-            print "not adding ", friend
+        if hasBeenScraped(playersCon, friend) or isWaitingToBeScraped(toScrapeCon, friend):
+            print "\tnot adding ", friend
         else:
-            c = toScrapeCon.cursor()
-            q = (friend,)
-            c.execute("INSERT INTO toScrape (steamid) VALUES (?)", q);
-            print "added ", friend, " to toScrape"
-            toScrapeCon.commit()
+            print "\tadded ", friend, " to toScrape"
+            queue.add(friend)
 
 
 # returns a list of friends that the users has
@@ -85,14 +86,15 @@ def getPlayersGames(urlGen,pid):
     response = urllib2.urlopen(url)
     jsons = json.loads(response.read())
     if "response" in jsons:
-        response = ["response"] 
-        games = response["games"]
-        gameCount = "game_count"
-        return games
+        response = ["response"]
+        if response != {}: 
+            games = response["games"]
+            gameCount = "game_count"
+            return games
     else: return "none" 
 
 # checks to see if we have record of the player
-def hasbeenScraped(playersCon, pid):
+def hasBeenScraped(playersCon, pid):
     c = playersCon.cursor()
     q = (str(pid),)
     c.execute("SELECT EXISTS(SELECT 1 FROM Players WHERE steamid=?);",q)
@@ -109,7 +111,7 @@ def isWaitingToBeScraped(toScrapeCon, pid):
 def removeFromToBeScraped(toScrapeCon, pid):
     c = toScrapeCon.cursor()
     q = (str(pid),)
-    c.execute("DELETE FROM toScrape WHERE steamid=?);",q)
+    c.execute("DELETE FROM toScrape WHERE steamid=?;",q)
     
 # gets the next player to be scraped
 def getNextToBeScraped(toScrapeCon):
@@ -118,5 +120,7 @@ def getNextToBeScraped(toScrapeCon):
     return c.fetchone()[0]
 
 
+def getSize
 if __name__ == '__main__':
+
     main()

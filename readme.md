@@ -20,15 +20,14 @@ database of players and their information, games played, bans
 Field | Type | Comment
 --- | --- | --- 
 steamid | INTEGER |
-privacy | INTEGER | 1 means private 3 means public
 realName | TEXT |
 gender | REAL| likelyhood of being male
 timeCreated | INTEGER |epoch time
 numFriends | INTEGER |
-friendList | BLOB | json of friend steamids of thisplayer 
+friendList | TEXT | json of friend steamids of thisplayer 
 numberOfGames |INTEGER |
 numberOfPlayedGames | INTEGER |
-games | BLOB | json of games and times
+games | TEXT | name of game table
 loccountrycode | TEXT | ex: "US"
 locstatecode | TEXT | ex: "WA"
 loccityid | INTEGER | ex: 3961
@@ -60,4 +59,4 @@ name | TEXT |
 releaseDate | INTEGER |
 genre | TEXT |
 rating | TEXT |
-Consumer Advice | TEXT
+consumerAdvice | TEXT
