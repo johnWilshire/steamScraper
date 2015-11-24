@@ -1,3 +1,14 @@
+#  A scraper to collect user data from steam
+
+see: [This wiki](https://developer.valvesoftware.com/wiki/Steam_Web_API#GetPlayerSummaries_.28v0002.29 )
+
+Please abide by the [steam api](http://steamcommunity.com/dev) terms of use
+
+
+# API Key
+
+store your api key in a file called "keyfile.txt"
+
 # Databases 
 
 databases are in sqlite
@@ -32,7 +43,7 @@ database of player ids gained from friendslist
 
 Field | Type | Comment
 --- | --- | --- 
-steamid  | INT | ---
+steamid  | INT | 
 
 
 ### games.db
@@ -41,7 +52,7 @@ games with non zero playtime are added
 
 Field | Type | Comment
 --- | --- | --- 
-appid | INT | ---
+appid | INT | 
 name | TEXT |
 releaseDate | INT |
 genre | TEXT |
