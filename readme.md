@@ -20,21 +20,26 @@ database of players and their information, games played, bans
 Field | Type | Comment
 --- | --- | --- 
 steamid | INTEGER |
+communityvisibilitystate | INTEGER  | 1 means private 3 means public
 lastlogoff| INTEGER |
 realname | TEXT |
 firstname | TEXT |
 gender | REAL| likelyhood of being male
-timecreated | INTEGER |epoch time
+timeCreated | INTEGER |epoch time
 numFriends | INTEGER |
-friendList | BLOB | comma seperated friend ids of this player 
+friendList | BLOB | json of friend steamids of thisplayer 
+numberOfGames |INTEGER |
+numberOfPlayedGames | INTEGER |
+games | BLOB | json of games and times
 loccountrycode | TEXT | ex: "US"
 locstatecode | TEXT | ex: "WA"
 loccityid | INTEGER | ex: 3961
 CommunityBanned | TEXT | true, false 
 VACBanned | TEXT | true, false
-NumberOfVACBans | INTEGER |
+numberOfVACBans | INTEGER |
 NumberOfGameBans | INTEGER |
 
+The change of case is in steams api it is easier if we use what keys they use.
 
 
 ### toScrape.db
@@ -43,7 +48,7 @@ database of player ids gained from friendslist
 
 Field | Type | Comment
 --- | --- | --- 
-steamid  | INT | 
+steamid  | INTEGER | 
 
 
 ### games.db
@@ -52,9 +57,9 @@ games with non zero playtime are added
 
 Field | Type | Comment
 --- | --- | --- 
-appid | INT | 
+appid | INTEGER | 
 name | TEXT |
-releaseDate | INT |
+releaseDate | INTEGER |
 genre | TEXT |
 rating | TEXT |
 Consumer Advice | TEXT
