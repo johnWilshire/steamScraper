@@ -1,3 +1,4 @@
 keyfile.txt
 players.db
 toScrape.db
+*.pyc
