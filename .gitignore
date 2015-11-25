@@ -6,3 +6,6 @@ old.*
 *.db-journal
 playersGames.db
 friendsList.db
+toScrape.db,journal
+toScrape.db.journal
+gender.db
