@@ -3,3 +3,4 @@ players.db
 toScrape.db
 *.pyc
 old.*
+*.db-journal
