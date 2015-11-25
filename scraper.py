@@ -51,10 +51,11 @@ def addSummaries(urlGen, queue, players, gender,friends):
             if friendsList != "none": 
                 player.addNumFriends(friendsList)
                 friends.addFriends(pid, friendsList)
-            print "player name: ", player.firstName, player.gender, player.genderConf, "friends",player.numFriends, " remaining: ", numScrape
-            for friend in friendsList:
-                if not (queue.inQueue(friend) or players.inPlayers(friend)):
-                    queue.push(friend)
+            print "player name: ", player.firstName, player.gender, player.genderConf, player.loccountrycode,"friends",player.numFriends, " remaining: ", numScrape
+            if not player.loccountrycode in ["", "US"]: # we are targeting americans
+                for friend in friendsList:
+                    if not (queue.inQueue(friend) or players.inPlayers(friend)):
+                        queue.push(friend)
         queue.free(player.steamid)
         numScrape -= 1
 
