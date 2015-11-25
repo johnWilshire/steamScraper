@@ -4,3 +4,5 @@ toScrape.db
 *.pyc
 old.*
 *.db-journal
+playersGames.db
+friendsList.db
