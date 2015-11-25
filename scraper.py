@@ -9,7 +9,8 @@ from lib.steamUrl import SteamUrl
 from lib.player import Player
 from lib.queue import Queue
 from lib.gender import Gender
-from players import Players
+from lib.friends import Friends
+from lib.players import Players
 
 
 def main():
@@ -23,12 +24,15 @@ def main():
     queue = Queue(lite.connect("toScrape.db"))
     players = Players(lite.connect("players.db"))
     gender = Gender(lite.connect("gender.db"))
-    addSummaries(key, urlGen, queue, players, gender)
+    friends = Friends(lite.connect("friendsList.db"))
+    #print getPlayersGames(urlGen, queue.next())
+    addSummaries(key, urlGen, queue, players, gender, friends)
+
 
 
 
 # scrapes player summaries getting players from the queue.db and adding them to players.db
-def addSummaries(key, urlGen, queue, players, gender):    
+def addSummaries(key, urlGen, queue, players, gender,friends):    
     # read number of records to pull
     numScrape = 10 
     if len(sys.argv) == 2:
@@ -37,13 +41,16 @@ def addSummaries(key, urlGen, queue, players, gender):
     while (numScrape > 0):
         pid = queue.next()
         player = Player(getPlayerInfo(urlGen, pid), players.connection)
-        print "player", player.steamid, numScrape
         if not player.isPrivate():
             player.addPlayerInfoToDB()
             player.addGender(gender)
-            friends = getFriendIds(urlGen, pid)
-            player.addNumFriends(len(friends))
-            for friend in friends:
+            friendsList = getFriendIds(urlGen, pid)
+            if friendsList != "none": 
+                player.addNumFriends(friendsList)
+                friends.addFriends(pid, friendsList)
+
+            print "player", player.steamid, player.gender, player.numFriends, numScrape
+            for friend in friendsList:
                 if not (queue.inQueue(friend) or players.inPlayers(friend)):
                     queue.push(friend)
         queue.free(pid)
@@ -72,19 +79,19 @@ def getFriendIds(urlGen, pid):
         friendsRaw = jsons["friendslist"]["friends"]
         friends  = list()
         for friend in friendsRaw:
-            friends.append(int(friend["steamid"]))
+            friends.append(str(friend["steamid"]))
         return friends
     else:
         return "none"
 
-## returns a list of game ids that have non zero playtime for the give player
-def getPlayersGames(urlGen, pid):
-    pid = str(pid)
+## returns a list of game ids  and playtimes playtime for the give player
+def getPlayersGames(urlGen,player):
+    pid = str(player)
     url =  urlGen.getOwnedGames(pid)
     response = urllib2.urlopen(url)
     jsons = json.loads(response.read())
     if "response" in jsons:
-        response = ["response"]
+        response = jsons["response"]
         if response != {}: 
             games = response["games"]
             gameCount = "game_count"

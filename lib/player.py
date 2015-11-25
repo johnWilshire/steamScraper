@@ -6,6 +6,7 @@ import re
 class Player:
     def __init__(self, playerJson, connection):
         self.connection = connection
+
         self.steamid = str(playerJson["steamid"])
         self.privacy = int(playerJson["communityvisibilitystate"])
         self.realname = ""
@@ -13,6 +14,7 @@ class Player:
         self.locstatecode = ""
         self.loccityid = ""
         self.firstName = ""
+        self.gender = ""
 
         if "realname" in playerJson:
             try:
@@ -37,9 +39,9 @@ class Player:
         c.execute(statement,(self.steamid, self.realname, self.firstName, self.loccountrycode, self.locstatecode, self.loccityid))
         self.connection.commit()
 
-    def addNumFriends(self, numFriends):
-        print numFriends, "friends"
-        tup = (numFriends , self.steamid, )
+    def addNumFriends(self, friends):
+        self.numFriends = len(friends)
+        tup = (self.numFriends , self.steamid, )
         statement = """UPDATE Players SET numFriends = ? WHERE steamid = ?;"""
         c = self.connection.cursor()
         c.execute(statement, tup)
@@ -50,8 +52,11 @@ class Player:
 
     def addGender(self,gender):
         gen = gender.getGender(self.firstName)
-        print gen
-        statement = """UPDATE Players SET gender = ? WHERE steamid = ?;""" 
+        sex = str(gen[0])
+        conf = str(gen[1])
+        statement = """UPDATE Players SET gender = ?, genderConf = ? WHERE steamid = ?;""" 
         c = self.connection.cursor()
-        c.execute(statement, (gen, self.steamid,))
+        c.execute(statement, (sex, conf, self.steamid,))
+        self.gender = sex
         self.connection.commit()
+

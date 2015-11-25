@@ -21,7 +21,8 @@ Field | Type | Comment
 --- | --- | --- 
 steamid | INTEGER |
 realName | TEXT |
-gender | REAL| likelyhood of being male
+gender | TEXT
+genderConf | REAL | confidence of gender
 numFriends | INTEGER |
 friendList | TEXT | name of the friendsTable
 numberOfGames |INTEGER |
@@ -46,6 +47,17 @@ Field | Type | Comment
 --- | --- | --- 
 steamid  | INTEGER | 
 
+### playerGames.db
+
+column for each game, time, row for each player
+we will convert NA's to 0 in R
+
+Field | Type | Comment
+--- | --- | --- 
+steamid | TEXT | 
+app1 | TEXT |
+app2 | INTEGER |
+...
 
 ### games.db
 

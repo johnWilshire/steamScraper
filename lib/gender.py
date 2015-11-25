@@ -11,12 +11,11 @@ class Gender:
     def getGender(self, name):
         response = self.lookUp(name)
         if response != None:
-            return response[1]
+            return [response[1],response[2]]
         else:
             response = self.callApi( name)
-            print response[1]
-            return response[1]
-
+            print response[1], response[2]
+            return [response[1], response[2]]
 
     def lookUp (self, name):
         c = self.connection.cursor()
@@ -33,7 +32,7 @@ class Gender:
     def insertName(self, nameJsons, name):
         c = self.connection.cursor()
         if nameJsons["gender"] == None:
-            gender = None
+            gender = "None"
             probability = 1.00
             count = 0
         else:
@@ -43,5 +42,4 @@ class Gender:
         t = (name,gender,probability,count,)
         c.execute("""INSERT INTO Gender (name, gender, prob, count) VALUES (?, ?, ?,?);""", t)
         self.connection.commit()
-        print t
         return t
