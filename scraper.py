@@ -98,5 +98,8 @@ def getPlayersGames(urlGen,player):
             return games
     else: return "none" 
 
+
+# TODO Games db update games db
+
 if __name__ == '__main__':
     main()
