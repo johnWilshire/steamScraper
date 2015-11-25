@@ -24,9 +24,7 @@ realName | TEXT |
 gender | TEXT
 genderConf | REAL | confidence of gender
 numFriends | INTEGER |
-friendList | TEXT | name of the friendsTable
 numberOfGames |INTEGER |
-numberOfPlayedGames | INTEGER |
 games | TEXT | name of game table
 loccountrycode | TEXT | ex: "US"
 locstatecode | TEXT | ex: "WA"
@@ -65,9 +63,18 @@ games with non zero playtime are added
 
 Field | Type | Comment
 --- | --- | --- 
-appid | INTEGER | 
+appid | TEXT | 
 name | TEXT |
 releaseDate | INTEGER |
 genre | TEXT |
 rating | TEXT |
-consumerAdvice | TEXT
+consumerAdvice | TEXT |
+
+### friendsList.db
+
+games with non zero playtime are added 
+
+Field | Type | Comment
+--- | --- | --- 
+steamid | TEXT | 
+friends | TEXT |
