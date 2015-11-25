@@ -5,9 +5,10 @@ import sys
 con = lite.connect('players.db')
 c = con.cursor()
 c.execute("""CREATE TABLE Players (
-    steamid INTEGER,
+    steamid TEXT,
     realname TEXT,
-    gender REAL,
+    firstName TEXT,
+    gender TEXT,
     numFriends INTEGER,
     friendList TEXT,
     numberOfGames INTEGER,

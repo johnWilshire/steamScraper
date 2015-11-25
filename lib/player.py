@@ -1,7 +1,7 @@
 #!/bin/usr/python
 
 # holds information about a player 
-
+import re
 # player class 
 class Player:
     def __init__(self, playerJson, connection):
@@ -12,12 +12,16 @@ class Player:
         self.loccountrycode = ""
         self.locstatecode = ""
         self.loccityid = ""
+        self.firstName = ""
 
         if "realname" in playerJson:
             try:
-                self.realname = str(playerJson["realname"])
-            except UniCodeEncodeError:
+                self.realname = re.sub("[^\w ]","",str(playerJson["realname"]))
+                self.realname = self.realname.lower()
+                self.firstName = re.split(" ", self.realname)[0]
+            except UnicodeEncodeError :
                 self.realname = "unicode"
+                self.privacy = 1
         if "loccountrycode" in playerJson:
             self.loccountrycode = str(playerJson["loccountrycode"])
         if "locstatecode" in playerJson:
@@ -25,21 +29,29 @@ class Player:
         if "loccityid" in playerJson:
             self.loccityid = str(playerJson["loccityid"])
 
-    #returns a list, 0 is the insert statement, 1 is the parameter tuple
     def addPlayerInfoToDB(self):
         statement = """INSERT INTO Players 
-            (steamid, realname,loccountrycode,locstatecode,loccityid)
-            VALUES (?,?,?,?,?);"""
+            (steamid, realname, firstName, loccountrycode,locstatecode,loccityid)
+            VALUES (?,?,?,?,?,?);"""
         c = self.connection.cursor()
-        c.execute(statement,(self.steamid, self.realname, self.loccountrycode, self.locstatecode, self.loccityid))
+        c.execute(statement,(self.steamid, self.realname, self.firstName, self.loccountrycode, self.locstatecode, self.loccityid))
         self.connection.commit()
 
     def addNumFriends(self, numFriends):
-        numFriends = (numFriends , self.steamid, )
+        print numFriends, "friends"
+        tup = (numFriends , self.steamid, )
         statement = """UPDATE Players SET numFriends = ? WHERE steamid = ?;"""
         c = self.connection.cursor()
-        c.execute(statement, numFriends)
+        c.execute(statement, tup)
         self.connection.commit()
 
     def isPrivate(self):
         return self.privacy == 1
+
+    def addGender(self,gender):
+        gen = gender.getGender(self.firstName)
+        print gen
+        statement = """UPDATE Players SET gender = ? WHERE steamid = ?;""" 
+        c = self.connection.cursor()
+        c.execute(statement, (gen, self.steamid,))
+        self.connection.commit()

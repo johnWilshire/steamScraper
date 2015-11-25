@@ -5,10 +5,10 @@ import sqlite3 as lite
 import sys
 import re
 
-from steamUrl import SteamUrl
-from player import Player
-from queue import Queue
-
+from lib.steamUrl import SteamUrl
+from lib.player import Player
+from lib.queue import Queue
+from lib.gender import Gender
 from players import Players
 
 
@@ -22,7 +22,13 @@ def main():
     urlGen = SteamUrl(key)
     queue = Queue(lite.connect("toScrape.db"))
     players = Players(lite.connect("players.db"))
-    
+    gender = Gender(lite.connect("gender.db"))
+    addSummaries(key, urlGen, queue, players, gender)
+
+
+
+# scrapes player summaries getting players from the queue.db and adding them to players.db
+def addSummaries(key, urlGen, queue, players, gender):    
     # read number of records to pull
     numScrape = 10 
     if len(sys.argv) == 2:
@@ -31,9 +37,10 @@ def main():
     while (numScrape > 0):
         pid = queue.next()
         player = Player(getPlayerInfo(urlGen, pid), players.connection)
-        print "player", player.steamid
+        print "player", player.steamid, numScrape
         if not player.isPrivate():
             player.addPlayerInfoToDB()
+            player.addGender(gender)
             friends = getFriendIds(urlGen, pid)
             player.addNumFriends(len(friends))
             for friend in friends:
@@ -41,7 +48,6 @@ def main():
                     queue.push(friend)
         queue.free(pid)
         numScrape -= 1
-
 
 # gets player info 
 def getPlayerInfo(urlGen, pid):
