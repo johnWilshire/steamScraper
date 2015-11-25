@@ -7,7 +7,10 @@ Please abide by the [steam api](http://steamcommunity.com/dev) terms of use.
 
 ### API Key
 
-store your api key in a file called "keyfile.txt"
+store your api key in the first line of a file called "keyfile.txt"
+store your genderize key in the second line of the keyfile
+
+if you do not have a genderize key modify the url in lib/gender.py
 
 # Databases 
 

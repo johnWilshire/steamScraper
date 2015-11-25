@@ -1,8 +1,8 @@
 #!/bin/bash
 
 while true; do 
-    ls -lh players.db toScrape.db gender.db friendsList.db
-    echo 
+    ls -Slh | head -5
     date | cut -d\  -f4
-    sleep 3
+    echo
+    sleep 1
 done

@@ -58,5 +58,6 @@ class Player:
         c = self.connection.cursor()
         c.execute(statement, (sex, conf, self.steamid,))
         self.gender = sex
+        self.genderConf = conf
         self.connection.commit()
 

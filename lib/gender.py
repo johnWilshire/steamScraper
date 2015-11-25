@@ -5,8 +5,9 @@ import urllib2
 import json
 
 class Gender:
-    def __init__(self,connection):
+    def __init__(self, connection, apikey):
         self.connection = connection
+        self.apikey = apikey
 
     def getGender(self, name):
         response = self.lookUp(name)
@@ -14,7 +15,6 @@ class Gender:
             return [response[1],response[2]]
         else:
             response = self.callApi( name)
-            print response[1], response[2]
             return [response[1], response[2]]
 
     def lookUp (self, name):
@@ -24,7 +24,7 @@ class Gender:
 
     def callApi(self, name):
         print "\tcalling gender API for ", name
-        url = "https://api.genderize.io/?name=%s" % (name)
+        url = "https://api.genderize.io/?name=%s&apikey=%s" % (name, self.apikey )
         response = urllib2.urlopen(url)
         jsons = json.loads(response.read())
         return self.insertName(jsons, name)
