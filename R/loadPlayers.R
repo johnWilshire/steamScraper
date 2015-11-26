@@ -16,7 +16,6 @@ confidentAmericans <- confident[confident$loccountrycode == "US" ,]
 states <- confidentAmericans[ confidentAmericans$locstatecode != "",]
 
 states <- confidentAmericans[ confidentAmericans$locstatecode != "",]
-cities <- states[states$loccityid != 0,]
 nr = nrow(states)
 #write.csv(states$steamid, "statesPlayers.csv")
 # nr / np

@@ -12,3 +12,4 @@ gender.db
 toScrape.db-journal
 *.csv
 *.json
+*.log

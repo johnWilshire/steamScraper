@@ -1,6 +1,8 @@
 #!/bin/usr/python
 
 # writes games and playtime to a json
+# will need to seperate dataset into smaller chuncks if I run out of memeory
+
 import sys
 import json
 import urllib2
@@ -22,8 +24,10 @@ def main():
 
     urlGen = SteamUrl(steamKey)
     i = 0
-    ids = ids
+    ids = ids[:1000]
     players = list()
+    log = open("errors.log", "w")
+    #
     with open("playerGames.json", "w") as myFile:
         # check which users are in our db
         for steamid in ids:
@@ -32,13 +36,21 @@ def main():
             url = urlGen.getOwnedGames(steamid)
             response = urllib2.urlopen(url)
             response = json.loads(response.read())["response"]
-            player["ownedGames"] = response["game_count"]
-            for game in response["games"]:
-                appid = game["appid"]
-                player[appid] = game["playtime_forever"]
-            players.append(player)
-            print steamid, len (ids) - i
+            if "games" in response and "game_count" in response:
+                player["ownedGames"] = response["game_count"]
+                for game in response["games"]:
+                    appid = str(game["appid"])
+                    player[appid] = game["playtime_forever"]
+                    if "playtime_2weeks" in game:
+                        player[appid + "_2weeks"] = game["playtime_2weeks"]
+                    player[appid] = game["playtime_forever"]
+                players.append(player)
+                print steamid, len (ids) - i
+            else:
+                print "\t", steamid, "has no games or gamecount"
+                log.write("%s ,has no games or gamecount" % (steamid))
             i += 1
+
         myFile.write(json.dumps(players))
 
 if __name__ == '__main__':
