@@ -1,6 +1,4 @@
-# todo this
-cp toScrape.db
-cp players.db
-cp friendsList.db
-cp playersGames.db
-cp genders.db
+name=`date +%d-%e-%g__%R`
+echo $name
+zip $name *.db
+mv $name.zip ~/datasets/steamScraperBackUps

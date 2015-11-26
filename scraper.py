@@ -50,9 +50,10 @@ def addSummaries(urlGen, queue, players, gender,friends):
             friendsList = getFriendIds(urlGen, pid)
             if friendsList != "none": 
                 player.addNumFriends(friendsList)
-                friends.addFriends(pid, friendsList)
             print "player name: ", player.firstName, player.gender, player.genderConf, player.loccountrycode,"friends",player.numFriends, " remaining: ", numScrape
-            if not player.loccountrycode in ["", "US"]: # we are targeting americans
+            if player.loccountrycode == "US" : # we are targeting americans
+                friends.addFriends(pid, friendsList)
+                print "\t\tadding friends from player from ", player.loccountrycode
                 for friend in friendsList:
                     if not (queue.inQueue(friend) or players.inPlayers(friend)):
                         queue.push(friend)
@@ -103,5 +104,5 @@ def getPlayersGames(urlGen,player):
 
 # TODO Games db update games db
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

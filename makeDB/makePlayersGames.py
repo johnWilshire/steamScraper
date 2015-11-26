@@ -4,8 +4,8 @@ import sqlite3 as lite
 con = lite.connect('playersGames.db')
 c = con.cursor()
 c.execute("""CREATE TABLE PlayersGames (
-    steamid TEXT
+    steamid TEXT,
+    gameCount TEXT
 );""")
-
 con.commit()
 con.close()

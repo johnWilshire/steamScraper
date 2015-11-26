@@ -75,7 +75,7 @@ consumerAdvice | TEXT |
 
 ### friendsList.db
 
-games with non zero playtime are added 
+friends are comma seperated
 
 Field | Type | Comment
 --- | --- | --- 
