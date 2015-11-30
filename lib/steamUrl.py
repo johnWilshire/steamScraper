@@ -24,6 +24,10 @@ class SteamUrl:
     def getAppInfo (self, id):
         return "http://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/?key=" + self.key +"&appid=" + id
 
+     # returns the url for a ban request can be given multiple ids in a list 
+    def getPlayersBans (self, id):
+        return "http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?key=" + self.key +"&steamids=" + ",".join(id)
+    
     # gets the url for a list of all apps availible on steam
     def allApps(self):
         return "http://api.steampowered.com/ISteamApps/GetAppList/v0001/"

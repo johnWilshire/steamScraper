@@ -14,3 +14,10 @@ class Players:
         c.execute("SELECT EXISTS(SELECT 1 FROM Players WHERE steamid=?);",q)
         return 1 == c.fetchone()[0]
 
+    # returns a list of players with no ban information
+    # these players are waiting to be scraped
+    def getPBans(self):
+        c = self.connection.cursor()
+        c.execute("SELECT steamid FROM Players WHERE VACBanned IS NULL;")
+        return c.fetchall()
+

@@ -44,21 +44,25 @@ def addSummaries(urlGen, queue, players, gender,friends):
     while (numScrape > 0):
         pid = queue.next()
         print pid
-        player = Player(getPlayerInfo(urlGen, pid), players.connection)
-        if not player.isPrivate():
-            player.addPlayerInfoToDB()
-            player.addGender(gender)
-            friendsList = getFriendIds(urlGen, pid)
-            if friendsList != "none": 
-                player.addNumFriends(friendsList)
-            print queue.count, "|",player.steamid,  player.firstName, player.gender, player.genderConf, player.loccountrycode, player.locstatecode,"friends",player.numFriends, " remaining: ", numScrape
-            if player.loccountrycode == "US" and  player.locstatecode != "CA": # we are targeting americans
-                friends.addFriends(pid, friendsList)
-                print "\tadding friends from player from ", player.loccountrycode
-                for friend in friendsList:
-                    if not (queue.inQueue(friend) or players.inPlayers(friend)):
-                        queue.push(friend)
-        queue.free(player.steamid)
+        try:
+            player = Player(getPlayerInfo(urlGen, pid), players.connection)
+            if not player.isPrivate():
+                player.addPlayerInfoToDB()
+                player.addGender(gender)
+                friendsList = getFriendIds(urlGen, pid)
+                if friendsList != "none": 
+                    player.addNumFriends(friendsList)
+                print queue.count, "|",player.steamid,  player.firstName, player.gender, player.genderConf, player.loccountrycode, player.locstatecode,"friends",player.numFriends, " remaining: ", numScrape
+                if player.loccountrycode == "US" and  player.locstatecode != "CA": # we are targeting americans
+                    friends.addFriends(pid, friendsList)
+                    print "\tadding friends from player from ", player.loccountrycode
+                    for friend in friendsList:
+                        if not (queue.inQueue(friend) or players.inPlayers(friend)):
+                            queue.push(friend)
+            queue.free(player.steamid)
+        except UnicodeEncodeError :
+            print "UnicodeEncodeError"
+            queue.free(pid)
         numScrape -= 1
 
 # gets player info 
