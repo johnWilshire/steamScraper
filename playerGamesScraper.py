@@ -26,31 +26,53 @@ def main():
 
     urlGen = SteamUrl(steamKey)
     # get a list of user ids without game information
+    print "reading noInfo"
     noInfo = [str(steamid[0]) for steamid in players.getNoGameInfo()]
     # read a list of ids to scrape game information from
+    print "reading country Codes"
     f = open("confidentCountry.csv")
     h = f.readline()
-    needed = [re.sub('"', '', line).rstrip() for line in f.readlines()]
-    # find the intersection of these lists
-    toDo = list()
-    for steamid in needed:
-        if steamid in noInfo:
-            toDo.append(steamid)
+    print "filtering"
+    #toDo = [re.sub('"', '', line).rstrip() for line in f.readlines() if re.sub('"', '', line).rstrip() in noInfo]
+    toDo = ['76561197960265731']
     i = 0
     for steamid in toDo:
         print "processing", i, "out of", len(toDo)
         r = urllib2.urlopen(urlGen.getOwnedGames(steamid))
-        response = json.loads(response.read())["response"]
-        gameCount = 0
+        response = json.loads(r.read())["response"]
+        updates = dict()
+        updates['numberOfGames'] = 0
+        updates['totalTimePlayed'] = 0
         if "games" in response and "game_count" in response:
-            gameCount = response["game_count"]
-            for game in response["games"]:
-                appid = str(game["appid"])
-                playtime = game["playtime_forever"]
-        else:
-            print "\t", steamid, "has no games or gamecount"
-            
+            updates['numberOfGames'] = response["game_count"]
+            for app in response["games"]:
+                appid = str(app["appid"])
+                playtime = app["playtime_forever"]
+                updates['totalTimePlayed'] += playtime
+                if playtime != 0:
+                    description = games.getDescription(appid)
+                    if description == "moved":
+                        continue
+                    cols = description[1]+ ", " + description[2]
+                    cols = re.split(', ', cols)
+                    addCols(players,cols)
+                    for col in cols: # update minutes
+                        if col in updates:
+                            updates[col] += playtime
+                        else:
+                            updates[col] = playtime
+        
+        for key in updates:
+            players.updatePlayer(steamid, key, updates[key])
+                    
         return
+
+# hecks if a col exists
+def addCols(players, cols):
+    existing = players.getCols()
+    for col in cols:
+        if not col in existing:
+            players.addCol(col)
 
 if __name__ == '__main__':
     main() 
