@@ -5,12 +5,9 @@ con = lite.connect('gameInfo.db')
 c = con.cursor()
 c.execute("""CREATE TABLE Games (
     appid TEXT,
-    name TEXT,
-    genres TEXT,
-    appType TEXT,
-    metacriticScore TEXT,
-    rating TEXT,
-    consumerAdvice TEXT
+    title TEXT,
+    advice TEXT,
+    genre TEXT
 );""")
 con.commit()
 con.close()

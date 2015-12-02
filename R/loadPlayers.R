@@ -10,12 +10,11 @@ gendered <- players[players$gender != "None",]
 ngend <- nrow(gendered)
 
 confident <- gendered[gendered$genderConf > 0.9,]
-
+confidentCountry <- confident[confident$loccountrycode != "" ,]
 confidentAmericans <- confident[confident$loccountrycode == "US" ,]
 
-states <- confidentAmericans[ confidentAmericans$locstatecode != "",]
+states <- confidentAmericans[ confidentAmericans$loctsatecode != "",]
 
-states <- confidentAmericans[ confidentAmericans$locstatecode != "",]
 nr = nrow(states)
-#write.csv(states$steamid, "statesPlayers.csv")
+#write.csv(confidentCountry$steamid, "confidentCountry.csv", row.names = FALSE)
 nr / np

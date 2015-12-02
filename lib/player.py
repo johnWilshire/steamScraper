@@ -60,4 +60,3 @@ class Player:
         self.gender = sex
         self.genderConf = conf
         self.connection.commit()
-
