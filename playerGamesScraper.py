@@ -17,7 +17,6 @@ from lib.games import GameScraper
 
 def main():
     # read in the ids
-    players = Players(lite.connect("players.db"))
     games = GameScraper()
     # read in the steam api key
     keyFile = open("keyfile.txt")
@@ -25,22 +24,17 @@ def main():
     steamKey = keys[0].rstrip()
 
     urlGen = SteamUrl(steamKey)
-    # get a list of user ids without game information
-    print "reading noInfo"
-    noInfo = [str(steamid[0]) for steamid in players.getNoGameInfo()]
-    # read a list of ids to scrape game information from
-    print "reading country Codes"
+    # get a list of user ids to scrape
     f = open("confidentCountry.csv")
     h = f.readline()
     print "filtering"
-    #toDo = [re.sub('"', '', line).rstrip() for line in f.readlines() if re.sub('"', '', line).rstrip() in noInfo]
-    toDo = ['76561197960265731']
+    toDo = [re.sub('"', '', line).rstrip() for line in f.readlines()]
     i = 0
+    # loop through the steam ids
     for steamid in toDo:
-        print "processing", i, "out of", len(toDo)
-        r = urllib2.urlopen(urlGen.getOwnedGames(steamid))
-        response = json.loads(r.read())["response"]
-        updates = dict()
+        print "processing", i, "out of", len(toDo),'remaining:',len(toDo), - i
+        response = getGamesList(games, urlGen, steamid)
+        updates = dict() # updates to the player info are placed in this dict
         updates['numberOfGames'] = 0
         updates['totalTimePlayed'] = 0
         if "games" in response and "game_count" in response:
@@ -51,28 +45,41 @@ def main():
                 updates['totalTimePlayed'] += playtime
                 if playtime != 0:
                     description = games.getDescription(appid)
-                    if description == "moved":
-                        continue
                     cols = description[1]+ ", " + description[2]
                     cols = re.split(', ', cols)
-                    addCols(players,cols)
+                    #addCols(players,cols)
                     for col in cols: # update minutes
                         if col in updates:
                             updates[col] += playtime
                         else:
                             updates[col] = playtime
         
-        for key in updates:
-            players.updatePlayer(steamid, key, updates[key])
-                    
-        return
+        #for key in updates:
+            #print key
+            #players.updatePlayer(steamid, key, updates[key])
+        i += 1
 
-# hecks if a col exists
+# checks if a col exists in players db
 def addCols(players, cols):
     existing = players.getCols()
     for col in cols:
         if not col in existing:
+            print "adding col", col
             players.addCol(col)
+
+#  checks the gamesList db for an entry with steamid
+# parses and returns the json stored there
+# else squerys the steam api and inserts the json into the db
+def getGamesList(games, urlGen, steamid):
+    gamesList =  games.getGames(steamid)
+    if gamesList == None: 
+        # query the api and insert the result
+        r = urllib2.urlopen(urlGen.getOwnedGames(steamid))
+        response = json.loads(r.read())["response"]
+        games.addGames(steamid, json.dumps(response))
+    else:
+        response = json.loads(gamesList[1])
+    return response
 
 if __name__ == '__main__':
     main() 

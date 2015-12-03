@@ -30,8 +30,6 @@ def main():
     #print getPlayersGames(urlGen, queue.next())
     addSummaries(urlGen, queue, players, gender, friends)
 
-#TODO things
-
 
 
 # scrapes player summaries getting players from the queue.db and adding them to players.db

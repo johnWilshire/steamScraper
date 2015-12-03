@@ -13,3 +13,4 @@ toScrape.db-journal
 *.csv
 *.json
 *.log
+*.db

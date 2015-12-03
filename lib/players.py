@@ -47,6 +47,5 @@ class Players:
     def updatePlayer(self, steamid, col, value):
         c = self.connection.cursor()
         s = "UPDATE Players SET %s = ? WHERE steamid = ?;" % (col)
-
         c.execute(s, (value, steamid, ))
         self.connection.commit()
