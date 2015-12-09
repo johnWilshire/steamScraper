@@ -1,6 +1,7 @@
 #!/bin/usr/python
 
-# class that implents a queue with sqlite
+# class that implents a bounded queue with sqlite
+# might not actually be a queue (it doesnt really matter for my purpose)
 
 class Queue:
     def __init__(self, connection):
@@ -32,7 +33,7 @@ class Queue:
         c.execute("SELECT steamid FROM toScrape;")
         return c.fetchone()[0]
 
-    # adds a 
+    # adds a value to the queue thing
     def push(self, friend):
         if self.wait > 0:
             self.wait -= 1

@@ -17,6 +17,7 @@ from lib.games import GameScraper
 
 def main():
     # read in the ids
+    players = Players(lite.connect("players.db"))
     games = GameScraper()
     # read in the steam api key
     keyFile = open("keyfile.txt")
@@ -30,11 +31,13 @@ def main():
     print "filtering"
     toDo = [re.sub('"', '', line).rstrip() for line in f.readlines()]
     i = 0
+    players = list()
     # loop through the steam ids
     for steamid in toDo:
-        print "processing", i, "out of", len(toDo),'remaining:',len(toDo), - i
+        print "processing", i, "out of", len(toDo),'remaining:',len(toDo) - i
         response = getGamesList(games, urlGen, steamid)
         updates = dict() # updates to the player info are placed in this dict
+        updates['steamid'] = steamid
         updates['numberOfGames'] = 0
         updates['totalTimePlayed'] = 0
         if "games" in response and "game_count" in response:
@@ -46,18 +49,19 @@ def main():
                 if playtime != 0:
                     description = games.getDescription(appid)
                     cols = description[1]+ ", " + description[2]
+                    cols = re.sub('-|\'|\.','',cols)
+                    cols = re.sub('&','and',cols)
                     cols = re.split(', ', cols)
-                    #addCols(players,cols)
                     for col in cols: # update minutes
                         if col in updates:
                             updates[col] += playtime
                         else:
                             updates[col] = playtime
-        
-        #for key in updates:
-            #print key
-            #players.updatePlayer(steamid, key, updates[key])
         i += 1
+        players.append(updates)
+
+    f = open('players_games.json','w')
+    f.write(json.dumps(players))
 
 # checks if a col exists in players db
 def addCols(players, cols):
