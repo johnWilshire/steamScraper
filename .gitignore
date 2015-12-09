@@ -14,3 +14,4 @@ toScrape.db-journal
 *.json
 *.log
 *.db
+.idea/*
